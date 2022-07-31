@@ -4,14 +4,14 @@
 Work in progress
 
 # Usage
-Required library: torch, torchvision
+Required library: `torch, torchvision`
 
 For training on cifar10 dataset 
 ~~~
 python cifar10_resnet.py
 ~~~
 
-For training food101 dataset
+For training on food101 dataset
 ~~~
 python food101_resnet.py
 ~~~
