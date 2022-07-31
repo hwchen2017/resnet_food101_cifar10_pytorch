@@ -176,6 +176,23 @@ class ResNet(nn.Module):
 		return x
 
 
+def resnet34(num_class = 101, input_chanel = 3, pretrained=False):
+
+	model = ResNet(BasicBlock, [3, 4, 6, 3], num_class, input_chanel)
+
+	if(pretrained):
+		state_dict = model_zoo.load_url(model_urls['resnet34'], map_location='cpu')
+		state_dict.pop('fc.weight', None)
+		state_dict.pop('fc.bias', None)
+
+		missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
+		print(missing_keys)
+		print(unexpected_keys)
+
+		print("Loaded imagenet pretained model")
+
+	return model
+
 
 
 
@@ -196,6 +213,22 @@ def resnet50(num_class = 101, input_chanel = 3, pretrained=False):
 
 	return model
 
+def resnet101(num_class = 101, input_chanel = 3, pretrained=False):
+
+	model = ResNet(Bottleneck, [3, 4, 23, 3], num_class, input_chanel)
+
+	if(pretrained):
+		state_dict = model_zoo.load_url(model_urls['resnet101'], map_location='cpu')
+		state_dict.pop('fc.weight', None)
+		state_dict.pop('fc.bias', None)
+
+		missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
+		print(missing_keys)
+		print(unexpected_keys)
+
+		print("Loaded imagenet pretained model")
+
+	return model
 
 
 

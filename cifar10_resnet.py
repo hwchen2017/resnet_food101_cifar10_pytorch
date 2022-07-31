@@ -118,7 +118,7 @@ class Resnet9(nn.Module):
 
 
 
-def training(train_loader, model, optimizer, print_freq = 50):
+def training(train_loader, model, optimizer, sched, print_freq=50):
 
 	model.train()
 
@@ -138,6 +138,7 @@ def training(train_loader, model, optimizer, print_freq = 50):
 		loss.backward()
 		optimizer.step()
 
+		sched.step()
 
 		losses.update(loss.item())
 
@@ -152,7 +153,7 @@ def training(train_loader, model, optimizer, print_freq = 50):
 
 
 parser = argparse.ArgumentParser(description = 'Pytorch Resnet Training for cifar10')
-parser.add_argument('--epoch', help='Number of training epoches', type=int, default=50)
+parser.add_argument('--epoch', help='Number of training epoches', type=int, default=30)
 parser.add_argument('--batchsize', help = 'Size of training batch', type = int, default = 128)
 parser.add_argument('--lr', help = 'Laraning rate', type = float, default = 0.01)
 parser.add_argument('--weight_decay', help = "Weight decay", type = float, default = 1e-4)
@@ -195,6 +196,7 @@ torch.manual_seed(random_seed)
 batch_size = args.batchsize 
 num_epochs = args.epoch
 save_checkpoint = args.save_checkpoint
+print_freq = args.print_freq
 
 
 train_loader = DataLoader(train_ds, batch_size, shuffle = True, num_workers = args.workers, pin_memory = True)
@@ -208,7 +210,8 @@ model = model.cuda()
 
 
 optimizer = torch.optim.Adam(model.parameters(), max_lr, weight_decay = args.weight_decay)
-sched = torch.optim.lr_scheduler.MultiStepLR(optimizer, [8, 16, 24, 32], gamma = 0.2 )
+# sched = torch.optim.lr_scheduler.MultiStepLR(optimizer, [8, 16, 24, 32], gamma = 0.2 )
+sched = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, epochs=num_epochs, steps_per_epoch=len(train_loader))
 # optimizer = torch.optim.Adam(model.parameters(), 0.001)
 # criterion = nn.functional.cross_entropy().cuda()
 
@@ -266,11 +269,11 @@ for epoch in range(start_epoch, num_epochs):
 
 	print("Epoch %d: " % epoch)
 
-	training(train_loader, model, optimizer)
+	training(train_loader, model, optimizer, sched, print_freq)
 
-	print("Current learning rate: ", sched.get_last_lr())
+	# print("Current learning rate: ", sched.get_last_lr())
 
-	sched.step()		
+	# sched.step()		
 
 	with torch.no_grad():
 		
