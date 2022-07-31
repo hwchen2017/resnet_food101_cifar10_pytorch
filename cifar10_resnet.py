@@ -146,19 +146,17 @@ def training(train_loader, model, optimizer, sched, print_freq=50):
 			print("Progress: %.2f%%, loss: %.3f" % (num/loader_size*100, loss.item()) )
 			# losses.update(loss)
 
-	print("Average loss: %.2f" % losses.avg)
+	print("Average loss: %.2f" % losses.avg)    
+	return losses.avg
 
 
-
-
-
-parser = argparse.ArgumentParser(description = 'Pytorch Resnet Training for cifar10')
-parser.add_argument('--epoch', help='Number of training epoches', type=int, default=30)
-parser.add_argument('--batchsize', help = 'Size of training batch', type = int, default = 128)
-parser.add_argument('--lr', help = 'Laraning rate', type = float, default = 0.01)
+parser = argparse.ArgumentParser(description = 'Pytorch Resnet Training for CIFAR10')
+parser.add_argument('--epoch', help='Number of training epoches', type=int, default=40)
+parser.add_argument('--batchsize', help = 'Size of training batch', type = int, default = 512)
+parser.add_argument('--lr', help = 'Laraning rate', type = float, default = 0.005)
 parser.add_argument('--weight_decay', help = "Weight decay", type = float, default = 1e-4)
 parser.add_argument('--workers', help = 'Number of worker', type = int, default = 4)
-parser.add_argument('--dataset', help = 'The path of training data', type = str, default = './data/cifar10')
+parser.add_argument('--dataset', help = 'The path of training data', type = str, default = './cifar10')
 # parser.add_argument('--pretrained', help = 'Using imagenet pretrained model', type = bool, default = True)
 parser.add_argument('--save_checkpoint', help = 'True for saving checkpoint during training', type = bool, default = True)
 parser.add_argument('--checkpoint_path', help = 'The path for checkpoint', type = str, default = './best_checkpoint.pth')
@@ -232,7 +230,7 @@ if(os.path.exists(checkpoint_path)):
 	optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 	sched.load_state_dict(checkpoint['scheduler_state_dict'])
 
-	print("Accuracy on saved model is: %.2f%%" % best_acc)
+	print("Accuracy of saved model is: %.2f%%" % best_acc)
 
 
 
@@ -261,7 +259,7 @@ if(args.evaluate == True):
 
 
 
-
+fp = open("cifar10_training.txt", "w")
 
 
 
@@ -269,7 +267,7 @@ for epoch in range(start_epoch, num_epochs):
 
 	print("Epoch %d: " % epoch)
 
-	training(train_loader, model, optimizer, sched, print_freq)
+	train_loss = training(train_loader, model, optimizer, sched, print_freq)
 
 	# print("Current learning rate: ", sched.get_last_lr())
 
@@ -278,7 +276,8 @@ for epoch in range(start_epoch, num_epochs):
 	with torch.no_grad():
 		
 		acc = AverageMeter()
-
+		losses = AverageMeter()
+        
 		model.eval()
 
 		for batch in valid_loader:
@@ -289,11 +288,14 @@ for epoch in range(start_epoch, num_epochs):
 			loss = nn.functional.cross_entropy(out, labels)
 			_, preds = torch.max(out, dim = 1)
 			current_acc = torch.tensor(torch.sum(preds == labels).item()/len(preds)).item()
-
+            
+			losses.update(loss.item())
 			acc.update(current_acc)
 
-		print("Accuracy on test data: %.2f%%" % (acc.avg*100.0))
-
+		print("Accuracy on test data: %.2f%%, loss: %.2f" % (acc.avg*100.0, losses.avg))
+        
+		fp.write("%d %.2f %.2f %.2f\n" %(epoch, train_loss, losses.avg, acc.avg) )
+        
 		if(acc.avg > best_acc and (save_checkpoint == True or epoch == num_epochs - 1)):
 			best_acc = acc.avg
 			torch.save({
@@ -306,6 +308,8 @@ for epoch in range(start_epoch, num_epochs):
 				}, checkpoint_path)
 
 
+            
+fp.close()
 
 
 
