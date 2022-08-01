@@ -105,7 +105,7 @@ parser.add_argument('--lr', help = 'Laraning rate', type = float, default = 0.01
 parser.add_argument('--weight_decay', help = "Weight decay", type = float, default = 1e-4)
 parser.add_argument('--workers', help = 'Number of worker', type = int, default = 4)
 parser.add_argument('--dataset', help = 'The path of training data', type = str, default = './food-101')
-parser.add_argument('--pretrained', help = 'Using imagenet pretrained model', type = bool, default = True)
+parser.add_argument('--pretrained', help = 'Using imagenet pretrained weights', type = bool, default = True)
 parser.add_argument('--save_checkpoint', help = 'True for saving checkpoint during training', type = bool, default = True)
 parser.add_argument('--checkpoint_path', help = 'The path for checkpoint', type = str, default = './best_checkpoint.pth')
 parser.add_argument('--print_freq', help = 'Print frequency', type = int, default = 50)
