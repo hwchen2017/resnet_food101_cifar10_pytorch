@@ -9,38 +9,60 @@ from torchvision import transforms
 from template import AverageMeter
 
 
-'''
-class CNNModel(nn.Module):
+
+class VGG11(nn.Module):
 	def __init__(self):
 		super().__init__()
 		self.conv1 = nn.Sequential(
-			nn.Conv2d(3, 32, kernel_size = 3, padding = 1),
-			nn.ReLU())
+			nn.Conv2d(3, 64, kernel_size = 3, padding = 1),
+			nn.BatchNorm2d(64),
+			nn.ReLU(inplace = True), 
+			nn.MaxPool2d(2, 2) )
+		# self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2)
 		self.conv2 = nn.Sequential(
-			nn.Conv2d(32, 64, kernel_size = 3, stride = 1, padding = 1),
-			nn.ReLU(), 
+			nn.Conv2d(64, 128, kernel_size = 3, stride = 1, padding = 1),
+			nn.BatchNorm2d(128),
+			nn.ReLU(inplace = True), 
 			nn.MaxPool2d(2, 2))
+
 		self.conv3 = nn.Sequential(
-			nn.Conv2d(64, 128, kernel_size = 3, stride = 1, padding = 1), 
-			nn.ReLU())
+			nn.Conv2d(128, 256, kernel_size = 3, stride = 1, padding = 1),
+			nn.BatchNorm2d(256),  
+			nn.ReLU(inplace = True))
+		
 		self.conv4 = nn.Sequential(
-			nn.Conv2d(128, 128, kernel_size = 3, stride = 1, padding = 1), 
-			nn.ReLU(), 
-			nn.MaxPool2d(2, 2))
+			nn.Conv2d(256, 256, kernel_size = 3, stride = 1, padding = 1),
+			nn.BatchNorm2d(256), 
+			nn.ReLU(inplace = True), 
+			nn.MaxPool2d(2, 2) )
+
 		self.conv5 = nn.Sequential(
-			nn.Conv2d(128, 256, kernel_size = 3, stride = 1, padding = 1), 
-			nn.ReLU())
+			nn.Conv2d(256, 512, kernel_size = 3, stride = 1, padding = 1),
+			nn.BatchNorm2d(512),  
+			nn.ReLU(inplace = True))
+		
 		self.conv6 = nn.Sequential(
-			nn.Conv2d(256, 256, kernel_size = 3, stride = 1, padding = 1), 
-			nn.ReLU(), 
+			nn.Conv2d(512, 512, kernel_size = 3, stride = 1, padding = 1),
+			nn.BatchNorm2d(512), 
+			nn.ReLU(inplace = True), 
+			nn.MaxPool2d(2, 2) )
+
+		self.conv7 = nn.Sequential(
+			nn.Conv2d(512, 512, kernel_size = 3, stride = 1, padding = 1),
+			nn.BatchNorm2d(512),  
+			nn.ReLU(inplace = True))
+		
+		self.conv8 = nn.Sequential(
+			nn.Conv2d(512, 512, kernel_size = 3, stride = 1, padding = 1),
+			nn.BatchNorm2d(512), 
+			nn.ReLU(inplace = True), 
 			nn.MaxPool2d(2, 2))
+
+
 
 		self.linear_layer = nn.Sequential(
 			nn.Flatten(), 
-			nn.Linear(256*4*4, 1024), 
-			nn.ReLU(), 
-			nn.Linear(1024, 512), 
-			nn.ReLU(), 
+            nn.Dropout(0.5),
 			nn.Linear(512, 10))
 
 	def forward(self, x):
@@ -50,10 +72,12 @@ class CNNModel(nn.Module):
 		out = self.conv4(out)
 		out = self.conv5(out)
 		out = self.conv6(out)
+		out = self.conv7(out)
+		out = self.conv8(out)
 		out = self.linear_layer(out)
 
 		return out
-'''
+
 
 
 
@@ -202,7 +226,7 @@ valid_loader = DataLoader(valid_ds, batch_size*2, num_workers = args.workers, pi
 
 
 max_lr = args.lr
-# model = CNNModel()
+# model = VGG11()
 model = Resnet9() 
 model = model.cuda() 
 
@@ -259,7 +283,7 @@ if(args.evaluate == True):
 
 
 
-fp = open("cifar10_training.txt", "w")
+fp = open("cifar10_training_vgg11.txt", "w")
 
 
 

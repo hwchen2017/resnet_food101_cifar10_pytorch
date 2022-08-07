@@ -1,7 +1,8 @@
 # ResNet Implementation for Food101/CIFAR10 in Pytorch
 
 # Introduction
-Work in progress
+This is a PyTorch implementation of Residual Networks introduced in the paper "Deep Residual Learning for Image Recognition". I built a ResNet9 model for CIFAR10 dataset, and ResNet50 model for Food101 dataset. Besides, I also tried VGG11 model on CIFAR10 dataset for comparison. 
+
 
 # Usage
 Required library: `torch, torchvision`
@@ -45,8 +46,9 @@ optional arguments:
 ~~~
 
 # Results
-
-A ResNet9 model was built for CIFAR10, and top1 accuracy 93.51% was obatined after 40 epoches of training. The following results were obatined using default parameters.
+## CIFAR10
+### ResNet
+A ResNet9 model was trainned for CIFAR10, and top1 accuracy 93.51% was obatined after 40 epoches. The following results were obatined using default parameters in code.
 
 Evaluation accuracy during training: 
 ![accuracy for cifar10](./images/cifar10_acc.png)
@@ -54,9 +56,16 @@ Evaluation accuracy during training:
 Loss during training:
 ![accuracy for cifar10](./images/cifar10_loss.png)
 
+### VGG11
+
+The top1 accuracy of VGG11 model on CIFAR10 dataset obatined using default parameters in code is 91.45%. 
+Evaluation accuracy during training: 
+![accuracy for cifar10](./images/cifar10_acc_vgg11.png)
 
 
-A ResNet50 model was built for Food101, and Imagenet pretrained weights was loaded. Using 40 epoches, the highest top1 accuracy I get is 84.23%. The following results were obatined using default parameters.
+## Food101
+
+A ResNet50 model was built for Food101, and Imagenet pretrained weights was loaded. After 40 epoches, the highest top1 accuracy I get is 84.23%. The following results were obatined using default parameters.
 
 Evaluation accuracy during training: 
 ![accuracy for cifar10](./images/food101_acc.png)
